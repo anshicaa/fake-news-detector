@@ -5,7 +5,6 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
-# Load trained model & vectorizer
 model = pickle.load(open("model/model.pkl", "rb"))
 vectorizer = pickle.load(open("model/vectorizer.pkl", "rb"))
 
@@ -15,8 +14,10 @@ class NewsInput(BaseModel):
 def clean(text):
     text = text.lower()
     text = re.sub(r"http\S+", "", text)
+    text = re.sub(r"\d+", "", text)
     text = re.sub(r"[^a-z\s]", "", text)
-    return text
+    text = re.sub(r"\s+", " ", text)
+    return text.strip()
 
 @app.get("/")
 def root():
@@ -24,13 +25,28 @@ def root():
 
 @app.post("/predict")
 def predict_news(data: NewsInput):
-    cleaned_text = clean(data.text)
-    vector = vectorizer.transform([cleaned_text])
+    cleaned = clean(data.text)
+    vector = vectorizer.transform([cleaned])
 
-    prediction = model.predict(vector)[0]
-    probability = model.predict_proba(vector)[0].max()
+    probs = model.predict_proba(vector)[0]
+    fake_prob = probs[0]
+    real_prob = probs[1]
+
+    # Decision logic
+    if real_prob >= 0.6:
+        label = "REAL"
+        confidence = real_prob
+    elif fake_prob >= 0.6:
+        label = "FAKE"
+        confidence = fake_prob
+    else:
+        label = "UNCERTAIN"
+        confidence = max(real_prob, fake_prob)
 
     return {
-        "prediction": "REAL" if prediction == 1 else "FAKE",
-        "confidence": round(float(probability), 2)
+        "prediction": label,
+        "confidence": round(float(confidence), 2),
+        "real_probability": round(float(real_prob), 2),
+        "fake_probability": round(float(fake_prob), 2)
     }
+

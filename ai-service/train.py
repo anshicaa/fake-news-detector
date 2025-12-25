@@ -6,46 +6,47 @@ import os
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 
-# Load datasets
+# Load data
 fake = pd.read_csv("Fake.csv")
 real = pd.read_csv("True.csv")
 
 fake["label"] = 0
 real["label"] = 1
 
-# Combine & shuffle
-df = pd.concat([fake, real])
-df = df.sample(frac=1).reset_index(drop=True)
+df = pd.concat([fake, real]).sample(frac=1).reset_index(drop=True)
 
-# Text cleaning function
 def clean(text):
     text = text.lower()
     text = re.sub(r"http\S+", "", text)
+    text = re.sub(r"\d+", "", text)
     text = re.sub(r"[^a-z\s]", "", text)
-    return text
+    text = re.sub(r"\s+", " ", text)
+    return text.strip()
 
 df["text"] = df["text"].apply(clean)
 
 X = df["text"]
 y = df["label"]
 
-# Vectorization
-vectorizer = TfidfVectorizer(stop_words="english", max_df=0.7)
+vectorizer = TfidfVectorizer(
+    stop_words="english",
+    max_df=0.7,
+    min_df=5,
+    ngram_range=(1,2)
+)
+
 X_vec = vectorizer.fit_transform(X)
 
-# Train model
-model = LogisticRegression(max_iter=1000)
+model = LogisticRegression(
+    max_iter=1000,
+    class_weight="balanced"
+)
+
 model.fit(X_vec, y)
 
-# Ensure model folder exists
 os.makedirs("model", exist_ok=True)
 
-# Save trained artifacts
-with open("model/model.pkl", "wb") as f:
-    pickle.dump(model, f)
+pickle.dump(model, open("model/model.pkl", "wb"))
+pickle.dump(vectorizer, open("model/vectorizer.pkl", "wb"))
 
-with open("model/vectorizer.pkl", "wb") as f:
-    pickle.dump(vectorizer, f)
-
-print("Model trained and saved successfully")
-
+print("Model trained correctly with balanced classes")
