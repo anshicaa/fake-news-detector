@@ -1,70 +1,193 @@
-# Getting Started with Create React App
+📰 AI Fake News Detector
+An AI-powered fake news detection web application that analyzes news articles using Natural Language Processing (NLP) and Machine Learning, provides confidence-aware predictions, and helps users verify information responsibly using trusted sources.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+🚀 Features
 
-## Available Scripts
 
-In the project directory, you can run:
+AI-based classification of news articles as REAL, FAKE, or UNCERTAIN
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Confidence score to indicate prediction reliability
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
 
-### `npm test`
+Uncertainty handling to avoid overconfident or misleading results
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+Topic-based source suggestions for cross-checking news
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Satire detection to flag humorous or parody content
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+Modern UI with dark mode and mobile-friendly design
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+🧠 How It Works
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-## Learn More
+User pastes a full news article into the web interface
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Text is sent to the backend API
 
-### Code Splitting
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Backend forwards the text to an AI service
 
-### Analyzing the Bundle Size
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+The AI model:
 
-### Making a Progressive Web App
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Preprocesses the text
 
-### Advanced Configuration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Converts it to numerical features using TF-IDF
 
-### Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Predicts whether the news is REAL, FAKE, or UNCERTAIN
 
-### `npm run build` fails to minify
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Returns a confidence score
+
+
+
+
+The frontend displays:
+
+
+Prediction result
+
+
+Confidence bar
+
+
+Relevant verification sources
+
+
+
+
+
+🏗️ Tech Stack
+Frontend
+
+
+React.js
+
+
+Responsive UI with dark mode
+
+
+Backend
+
+
+Node.js
+
+
+Express.js
+
+
+AI / ML Service
+
+
+Python
+
+
+FastAPI
+
+
+Scikit-learn
+
+
+TF-IDF Vectorizer
+
+
+Logistic Regression
+
+
+
+📊 Dataset
+
+
+Public Fake/True news dataset (Kaggle)
+
+
+Labeled news articles used for supervised learning
+
+
+
+⚠️ Dataset files are included for development purposes only.
+
+
+⚠️ Important Disclaimer
+This application does NOT verify real-world facts.
+
+
+The model analyzes linguistic and stylistic patterns, not live information.
+
+
+Predictions are probabilistic, not absolute.
+
+
+Users are encouraged to cross-check news using trusted sources, especially for uncertain results.
+
+
+This project follows responsible AI principles.
+
+▶️ Running the Project Locally
+1️⃣ Start AI Service
+cd ai-service
+venv\Scripts\activate
+uvicorn main:app --reload --port 8000
+
+2️⃣ Start Backend
+cd backend
+npm install
+node index.js
+
+3️⃣ Start Frontend
+cd frontend
+npm install
+npm start
+
+Open in browser:
+👉 http://localhost:3000
+
+🎯 Why This Project Matters
+
+
+Demonstrates end-to-end AI system development
+
+
+Shows understanding of machine learning limitations
+
+
+Combines AI, backend, and frontend engineering
+
+
+Designed with ethical and responsible AI practices
+
+
+
+📌 Future Improvements
+
+
+Deployment on cloud platforms
+
+
+Improved topic classification
+
+
+Multi-language support
+
+
+Model calibration and tuning
+
+
+
+👤 Author
+Anshika
+AI & Full-Stack Development Enthusiast
+
+⭐ Final Note
+This project is intended as a decision-support tool, not a fact-checking authority.
+It encourages critical thinking and verification, rather than blind trust in AI.
