@@ -6,17 +6,53 @@ function App() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const isSatire = (content) => {
-    const words = ["satire", "parody", "joke", "humor", "meme"];
-    return words.some(w => content.toLowerCase().includes(w));
-  };
+  const [dark, setDark] = useState(true);
 
   const wordCount = text.trim().split(/\s+/).length;
 
+  const isSatire = (content) => {
+    const satireWords = ["satire", "parody", "joke", "humor", "meme"];
+    return satireWords.some(w => content.toLowerCase().includes(w));
+  };
+
+  // 🔍 Topic-based source suggestions
+  const getSourcesByTopic = (content) => {
+    const t = content.toLowerCase();
+
+    if (t.includes("health") || t.includes("virus") || t.includes("vaccine")) {
+      return [
+        { name: "World Health Organization", url: "https://www.who.int" },
+        { name: "Ministry of Health (India)", url: "https://www.mohfw.gov.in" },
+        { name: "Google News", url: "https://news.google.com" },
+      ];
+    }
+
+    if (t.includes("election") || t.includes("government") || t.includes("policy")) {
+      return [
+        { name: "Press Information Bureau", url: "https://www.pib.gov.in" },
+        { name: "Election Commission of India", url: "https://eci.gov.in" },
+        { name: "The Hindu", url: "https://www.thehindu.com" },
+      ];
+    }
+
+    if (t.includes("study") || t.includes("research") || t.includes("climate")) {
+      return [
+        { name: "Nature", url: "https://www.nature.com" },
+        { name: "Science Magazine", url: "https://www.sciencemag.org" },
+        { name: "NASA", url: "https://www.nasa.gov" },
+      ];
+    }
+
+    return [
+      { name: "The Hindu", url: "https://www.thehindu.com" },
+      { name: "Google News", url: "https://news.google.com" },
+      { name: "Reuters", url: "https://www.reuters.com" },
+    ];
+  };
+
   const checkNews = async () => {
     if (wordCount < 80) {
-      setError("Please paste a full article (at least 80 words).");
+      setError("Please paste a full article (minimum 80 words).");
       return;
     }
 
@@ -25,39 +61,51 @@ function App() {
     setResult(null);
 
     try {
-      const res = await axios.post(
-        "http://localhost:5000/check-news",
-        { text }
-      );
+      const res = await axios.post("http://localhost:5000/check-news", { text });
       setResult(res.data);
     } catch {
-      setError("Server error. Ensure backend and AI service are running.");
+      setError("Server error. Make sure backend is running.");
     }
 
     setLoading(false);
   };
 
-  const badgeColor = (prediction) => {
-    if (prediction === "REAL") return "#2ecc71";
-    if (prediction === "FAKE") return "#e74c3c";
-    return "#f1c40f";
-  };
+  const barColor = (p) =>
+    p === "REAL" ? "#22c55e" : p === "FAKE" ? "#ef4444" : "#facc15";
+
+  const icon = { REAL: "✅", FAKE: "⚠️", UNCERTAIN: "❓" };
 
   return (
     <div style={styles.page}>
-      <div style={styles.card}>
-        <h1 style={styles.title}>AI Fake News Detector</h1>
-        <p style={styles.subtitle}>
-          An AI-assisted system that analyzes writing patterns and helps users
-          verify news responsibly.
+      <div
+        style={{
+          ...styles.card,
+          background: dark ? "#020617" : "#ffffff",
+          color: dark ? "#e5e7eb" : "#111827",
+        }}
+      >
+        {/* Header */}
+        <div style={styles.header}>
+          <h1>AI Fake News Detector</h1>
+          <button onClick={() => setDark(!dark)} style={styles.toggle}>
+            {dark ? "☀️ Light" : "🌙 Dark"}
+          </button>
+        </div>
+
+        <p style={{ opacity: 0.8 }}>
+          AI-assisted analysis of news text with confidence-aware verification.
         </p>
 
         <textarea
-          rows="7"
-          placeholder="Paste a full news article here (80+ words recommended)..."
+          rows="6"
+          placeholder="Paste full news article here..."
           value={text}
           onChange={(e) => setText(e.target.value)}
-          style={styles.textarea}
+          style={{
+            ...styles.textarea,
+            background: dark ? "#020617" : "#ffffff",
+            color: dark ? "#e5e7eb" : "#111827",
+          }}
         />
 
         <button onClick={checkNews} style={styles.button}>
@@ -68,60 +116,52 @@ function App() {
 
         {result && (
           <div style={styles.resultBox}>
-            <span
-              style={{
-                ...styles.badge,
-                backgroundColor: badgeColor(result.prediction),
-              }}
-            >
-              {result.prediction}
-            </span>
+            <h2>
+              {icon[result.prediction]} {result.prediction}
+            </h2>
 
-            <p style={styles.confidenceText}>
-              Confidence: {Math.round(result.confidence * 100)}%
+            <p>
+              Confidence: <strong>{Math.round(result.confidence * 100)}%</strong>
             </p>
 
-            <div style={styles.barBackground}>
+            {/* ✅ Confidence BAR (no ring) */}
+            <div style={styles.barBg}>
               <div
                 style={{
                   ...styles.barFill,
                   width: `${Math.round(result.confidence * 100)}%`,
-                  backgroundColor: badgeColor(result.prediction),
+                  backgroundColor: barColor(result.prediction),
                 }}
               />
             </div>
 
             {!isSatire(text) && (
-              <div style={styles.sources}>
-                <p style={styles.sourcesTitle}>
+              <>
+                <p style={{ marginTop: 14 }}>
                   {result.prediction === "UNCERTAIN"
                     ? "The model is uncertain. Cross-checking is strongly recommended:"
-                    : "You may verify this assessment using reliable news sources:"}
+                    : "You may verify this assessment using trusted sources:"}
                 </p>
 
-                <ul>
-                  <li>
-                    <a href="https://www.thehindu.com" target="_blank" rel="noreferrer">
-                      The Hindu
+                <div style={styles.sources}>
+                  {getSourcesByTopic(text).map((s, i) => (
+                    <a
+                      key={i}
+                      href={s.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={styles.sourceCard}
+                    >
+                      🔗 {s.name}
                     </a>
-                  </li>
-                  <li>
-                    <a href="https://news.google.com" target="_blank" rel="noreferrer">
-                      Google News
-                    </a>
-                  </li>
-                  <li>
-                    <a href="https://www.reuters.com" target="_blank" rel="noreferrer">
-                      Reuters
-                    </a>
-                  </li>
-                </ul>
-              </div>
+                  ))}
+                </div>
+              </>
             )}
 
             {isSatire(text) && (
-              <p style={styles.satireWarning}>
-                ⚠️ This content appears to be satire or humor.
+              <p style={{ color: "#f59e0b", fontWeight: "bold" }}>
+                ⚠️ This appears to be satire or humor.
               </p>
             )}
 
@@ -138,95 +178,89 @@ function App() {
 
 export default App;
 
+/* ================= STYLES ================= */
+
 const styles = {
   page: {
     minHeight: "100vh",
-    background: "linear-gradient(135deg, #eef2f3, #d9e2ec)",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
-    fontFamily: "Arial, sans-serif",
+    padding: 16,
+    background:
+      "radial-gradient(circle at top, #6366f1 0%, #0f172a 45%, #020617 100%)",
   },
   card: {
-    background: "#ffffff",
-    borderRadius: 12,
-    padding: 30,
     width: "100%",
-    maxWidth: 800,
-    boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+    maxWidth: 720,
+    borderRadius: 18,
+    padding: 24,
+    boxShadow: "0 25px 50px rgba(0,0,0,0.35)",
   },
-  title: {
-    marginBottom: 5,
+  header: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-  subtitle: {
-    color: "#555",
-    marginBottom: 20,
+  toggle: {
+    border: "none",
+    padding: "6px 14px",
+    borderRadius: 20,
+    cursor: "pointer",
   },
   textarea: {
     width: "100%",
+    marginTop: 12,
     padding: 12,
-    fontSize: 14,
-    borderRadius: 8,
-    border: "1px solid #ccc",
+    borderRadius: 10,
+    border: "1px solid #334155",
     resize: "vertical",
   },
   button: {
-    marginTop: 15,
+    marginTop: 12,
     padding: "10px 20px",
-    borderRadius: 8,
+    borderRadius: 10,
     border: "none",
-    background: "#4a6cf7",
-    color: "#fff",
-    fontSize: 15,
+    background: "#6366f1",
+    color: "#ffffff",
     cursor: "pointer",
   },
   error: {
-    color: "red",
-    marginTop: 10,
+    color: "#ef4444",
+    marginTop: 8,
   },
   resultBox: {
-    marginTop: 30,
-    padding: 20,
-    borderRadius: 10,
-    background: "#f9fafb",
+    marginTop: 24,
   },
-  badge: {
-    display: "inline-block",
-    padding: "6px 14px",
-    borderRadius: 20,
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  confidenceText: {
-    marginTop: 10,
-    marginBottom: 6,
-  },
-  barBackground: {
+  barBg: {
     width: "100%",
     height: 10,
-    background: "#ddd",
+    background: "#334155",
     borderRadius: 10,
     overflow: "hidden",
+    marginTop: 6,
   },
   barFill: {
     height: "100%",
   },
   sources: {
-    marginTop: 20,
+    display: "flex",
+    gap: 10,
+    flexWrap: "wrap",
+    marginTop: 10,
   },
-  sourcesTitle: {
-    fontWeight: "bold",
-  },
-  satireWarning: {
-    marginTop: 15,
-    color: "#b36b00",
+  sourceCard: {
+    padding: "8px 12px",
+    borderRadius: 8,
+    background: "#1e293b",
+    color: "#e5e7eb",
+    textDecoration: "none",
     fontWeight: "bold",
   },
   disclaimer: {
-    marginTop: 15,
     fontSize: 12,
-    color: "#777",
+    opacity: 0.65,
+    marginTop: 14,
   },
 };
 
