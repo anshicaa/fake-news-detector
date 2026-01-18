@@ -1,105 +1,73 @@
 # Fake News Detector 📰
 
-A full-stack web application that uses **Natural Language Processing (NLP)** and **Machine Learning** to classify news articles as **Real**, **Fake**, or **Uncertain**, along with a confidence score to support responsible decision-making.
+A full-stack web application that uses **Natural Language Processing (NLP)** and **Machine Learning** to classify news articles as **Real, Fake, or Uncertain**, along with a **confidence score** to support responsible decision-making.
 
-This project focuses on **practical AI integration in real-world applications**, not blind automation.
+This project focuses on **practical AI integration**, not blind automation.
+
+---
+
+## 🔍 What This Project Does
+- Accepts a news article as input
+- Analyzes linguistic and stylistic patterns using ML
+- Predicts:
+  - **Real**
+  - **Fake**
+  - **Uncertain** (low confidence)
+- Displays a **confidence score** to avoid over-trust in predictions
+
+> ⚠️ This system does **not** verify live facts or real-time news sources.
 
 ---
 
 ## 🚀 Features
-- Machine learning–based text classification
-- Confidence score indicating prediction reliability
-- Handles uncertain predictions to avoid overconfidence
-- Clean and responsive user interface
-- Clear separation of frontend, backend, and AI service
+- Machine-learning–based text classification  
+- Confidence score indicating prediction reliability  
+- Explicit handling of uncertain predictions  
+- Clean, responsive React UI  
+- Clear separation of frontend, backend, and AI service  
+- API-based architecture (scalable & modular)
 
 ---
 
 ## 🧠 How It Works
-1. User submits a news article through the web interface  
-2. Request is sent to the backend API  
-3. Backend forwards text to the AI service  
-4. The ML model processes text using TF-IDF  
-5. Prediction result and confidence score are returned to the frontend  
-
-> ⚠️ The model analyzes linguistic and stylistic patterns only.  
-> It does **not** verify real-time facts or live news sources.
+1. User submits a news article via the web interface  
+2. Frontend sends request to backend API  
+3. Backend forwards text to AI service  
+4. ML model processes text using **TF-IDF**
+5. **Logistic Regression** generates prediction and confidence score  
+6. Result is returned and displayed to the user  
 
 ---
 
 ## 🏗️ Tech Stack
 
 ### Frontend
-- React.js
-- Responsive UI
+- React.js  
+- Responsive UI  
 
 ### Backend
-- Node.js
-- Express.js
+- Node.js  
+- Express.js  
 
 ### AI / ML Service
-- Python
-- FastAPI
-- Scikit-learn
-- TF-IDF Vectorizer
-- Logistic Regression
+- Python  
+- FastAPI  
+- Scikit-learn  
+- TF-IDF Vectorizer  
+- Logistic Regression  
 
 ---
 
 ## 📊 Dataset
-- Public Fake and Real News dataset (Kaggle)
-- Supervised learning using labeled news articles
-
-> Dataset files are included for development and learning purposes only.
+- Public **Fake & Real News** dataset (Kaggle)
+- Supervised learning using labeled news articles  
+- Dataset included for **learning and development purposes only**
 
 ---
 
-## ▶️ Running the Project Locally
+## ⚡ Quick Start
 
-### 1️⃣ Start AI Service
+### Clone the Repository
 ```bash
-cd ai-service
-venv\Scripts\activate
-uvicorn main:app --reload --port 8000
-```
-
-### 2️⃣ Start Backend
-```bash
-cd backend
-npm install
-node index.js
-```
-
-### 3️⃣ Start Frontend
-```bash
-cd frontend
-npm install
-npm start
-```
-Open your browser and visit:
-👉 http://localhost:3000
-
----
-
-## 🎯 Why This Project
-
--Demonstrates end-to-end full-stack development with AI integration
--Shows understanding of machine learning limitations
--Uses API-based architecture for scalability
--Emphasizes responsible and ethical AI usage
-
----
-
-## 👤 Author
-
-Anshika
-
-BCA Student | Full-Stack Development with AI Integration
-
----
-
-## ⚠️ Disclaimer
-
-This application is a decision-support tool, not a fact-checking authority.
-Users should always verify information using trusted and reliable sources
-
+git clone https://github.com/anshicaa/fake-news-detector.git
+cd fake-news-detector
